@@ -27,15 +27,19 @@ class Model(Base):
 
     def __repr__(self):
         name = type(self).__name__
-        attributes = self.__table__.columns._data.keys()
         attributes = [
-            '{}={}'.format(
-                attr,
-                getattr(self, attr),
-            ) for attr in attributes
+            '{}={}'.format(key, value)
+            for key, value in self.attributes().items()
         ]
         values = '; '.join(attributes)
         return '<{name}({values})>'.format(name=name, values=values)
+
+    def attributes(self):
+        attributes = self.__table__.columns._data.keys()
+        attributes = {
+            attr: getattr(self, attr) for attr in attributes
+        }
+        return attributes
 
 
 class Organization(Model):
@@ -82,6 +86,12 @@ class Organization(Model):
 class Deal(Model):
     __tablename__ = 'deals'
     __path__ = 'deals'
+
+    title = Column(String)
+    user_id = Column(Integer)
+    org_id = Column(Integer)
+    stage_id = Column(Integer)
+    visible_to = Column(Integer)
 
 
 # class User(Model):

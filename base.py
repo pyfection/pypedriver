@@ -46,6 +46,9 @@ class API:
     def query(self, model):
         return Query(self, model)
 
+    def write(self, model):
+        return self.request('POST', model.__path__, data=model.attributes())
+
 
 class Query:
     def __init__(self, api, Model):
