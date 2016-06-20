@@ -39,7 +39,7 @@ class Model(Base):
 
 
 class Organization(Model):
-    __tablename__ = 'pipedrive_orgs'
+    __tablename__ = 'organizations'
     __path__ = 'organizations'
 
     address = Column(String)
@@ -53,12 +53,13 @@ class Organization(Model):
     last_activity_date = Column(String)
     name = Column(String)
     owner_name = Column(String)
+    open_deals_count = Column(Integer)
 
 
-# class OrganizationField(Base, Model):
+# class OrganizationField(Model):
 #     __tablename__ = 'organization_fields'
+#     __path__ = 'organizationFields'
 
-#     PATH = 'organizationFields'
 #     ATTRIBUTES = {
 #         'id': None,
 #         'key': '',
@@ -67,10 +68,10 @@ class Organization(Model):
 #     }
 
 
-# class Filter(Base, Model):
+# class Filter(Model):
 #     __tablename__ = 'filters'
+#     __path__ = 'filters'
 
-#     PATH = 'filters'
 #     ATTRIBUTES = {
 #         'id': None,
 #         'name': '',
@@ -78,28 +79,24 @@ class Organization(Model):
 #     }
 
 
-# class Deal(Base, Model):
-#     __tablename__ = 'deals'
-
-#     PATH = 'deals'
-#     ATTRIBUTES = {
-#         'id': None,
-#     }
+class Deal(Model):
+    __tablename__ = 'deals'
+    __path__ = 'deals'
 
 
-# class User(Base, Model):
+# class User(Model):
 #     __tablename__ = 'users'
+#     __path__ = 'users'
 
-#     PATH = 'users'
 #     ATTRIBUTES = {
 #         'id': None,
 #     }
 
 
-# class Activity(Base, Model):
+# class Activity(Model):
 #     __tablename__ = 'activities'
+#     __path__ = 'activities'
 
-#     PATH = 'activities'
 #     ATTRIBUTES = {
 #         'id': None,
 #         'company_id': '',
@@ -118,3 +115,8 @@ class Organization(Model):
 #         'deal_title': '',
 #         'owner_name': '',
 #     }
+
+
+class Pipeline(Model):
+    __tablename__ = 'pipelines'
+    __path__ = 'pipelines'
