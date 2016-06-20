@@ -8,7 +8,7 @@ class API:
     api_token = ''
     proxies = {}
 
-    def login(self, user, password, proxies={}):
+    def authenticate(self, user, password, proxies={}):
         self.proxies = proxies
         session = requests.Session()
         response = session.post(
@@ -62,7 +62,7 @@ class Query:
             params.update({'filter_id': self.filter_id})
         response = self.api.request(
             method='GET',
-            path=self.Model.PATH,
+            path=self.Model.__path__,
             params=params,
         )
         return response

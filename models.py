@@ -6,8 +6,11 @@ from sqlalchemy import Column, Integer, String
 Base = declarative_base()
 
 
-class Model:
+class Model(Base):
+    __abstract__ = True
     __aliases__ = {}
+
+    id = Column(Integer, primary_key=True)
 
     def __init__(self, **kwargs):
         for key, value in list(kwargs.items()):
@@ -18,22 +21,27 @@ class Model:
             else:
                 kwargs.pop(key)
                 kwargs[alias] = value
-        super().__init__(**kwargs)
+        super().__init__()
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def __repr__(self):
         name = type(self).__name__
-        attributes = self.ATTRIBUTES.keys()
+        attributes = self.__table__.columns._data.keys()
         attributes = [
-            '{}={}'.format(attr, getattr(self, attr)) for attr in attributes
+            '{}={}'.format(
+                attr,
+                getattr(self, attr),
+            ) for attr in attributes
         ]
         values = '; '.join(attributes)
         return '<{name}({values})>'.format(name=name, values=values)
 
 
-class Organization(Base, Model):
+class Organization(Model):
     __tablename__ = 'pipedrive_orgs'
+    __path__ = 'organizations'
 
-    id = Column(Integer, primary_key=True)
     address = Column(String)
     address_admin_area_level_1 = Column(String)
     address_country = Column(String)
