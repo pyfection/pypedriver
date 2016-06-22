@@ -94,13 +94,9 @@ class Deal(Model):
     visible_to = Column(Integer)
 
 
-# class User(Model):
-#     __tablename__ = 'users'
-#     __path__ = 'users'
-
-#     ATTRIBUTES = {
-#         'id': None,
-#     }
+class User(Model):
+    __tablename__ = 'users'
+    __path__ = 'users'
 
 
 # class Activity(Model):

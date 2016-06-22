@@ -35,6 +35,7 @@ class API:
         methods = {
             'GET': session.get,
             'POST': session.post,
+            'PUT': session.put,
         }
         response = methods[method](
             uri,
@@ -43,8 +44,19 @@ class API:
         resp_json = response.json()
         return resp_json
 
-    def query(self, model):
-        return Query(self, model)
+    def get(self, Model, id):
+        response = self.request(
+            method='GET',
+            path=Model.__path__ + '/' + str(id),
+        )
+        return Model(**response['data'])
+
+    def query(self, Model):
+        return Query(self, Model)
+
+    def update(self, model, id=None):
+        path = model.__path__ + '/' + str(id or model.id)
+        return self.request('PUT', path, data=model.attributes())
 
     def write(self, model):
         return self.request('POST', model.__path__, data=model.attributes())
