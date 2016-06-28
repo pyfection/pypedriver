@@ -60,16 +60,12 @@ class Organization(Model):
     open_deals_count = Column(Integer)
 
 
-# class OrganizationField(Model):
-#     __tablename__ = 'organization_fields'
-#     __path__ = 'organizationFields'
+class OrganizationField(Model):
+    __tablename__ = 'organization_fields'
+    __path__ = 'organizationFields'
 
-#     ATTRIBUTES = {
-#         'id': None,
-#         'key': '',
-#         'name': '',
-#         'options': [],
-#     }
+    key = Column(String)
+    name = Column(String)
 
 
 # class Filter(Model):
