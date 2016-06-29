@@ -114,3 +114,9 @@ class Query:
                 start += 50
             else:
                 break
+
+
+api = API()
+login = api.login
+request = api.request
+query = api.query
