@@ -28,15 +28,7 @@ class Client:
                 raise TypeError('Could not authenticate')
 
     def __getattr__(self, name):
-        mapping = {
-            'Organization': 'organizations',
-            'Person': 'persons',
-        }
-        try:
-            path = mapping[name]
-        except KeyError:
-            raise TypeError('Model {} does not exist'.format(name))
-        return Model(path, self)
+        return Model(name, self)
 
     def authenticate(self, user, password, proxies={}):
         session = requests.Session()
@@ -147,9 +139,17 @@ class Query:
 
 class Model:
     __attributes__ = {}
+    __mapping__ = {
+        'Organization': 'organizations',
+        'Person': 'persons',
+    }
 
-    def __init__(self, path, client):
-        self.__path__ = path
+    def __init__(self, name, client):
+        self.__name__ = name
+        try:
+            self.__path__ = self.__mapping__[name]
+        except KeyError:
+            raise TypeError('Model {} does not exist'.format(name))
         self.client = client
 
     def __call__(self, **data):
@@ -159,9 +159,18 @@ class Model:
         return self
 
     def __setattr__(self, name, value):
-        if name not in ('__path__', 'client'):
+        if name not in ('client', ) or not name.startswith('__'):
             self.__attributes__[name] = value
         super().__setattr__(name, value)
+
+    def __repr__(self):
+        name = type(self).__name__
+        attributes = [
+            '{}={}'.format(key, value)
+            for key, value in self.__attributes__().items()
+        ]
+        values = '; '.join(attributes)
+        return '<{name}({values})>'.format(name=name, values=values)
 
     def fetch_raw(self, filter_id=None, start=0, limit=50, sort=None):
         params = {'start': start, 'limit': limit}
