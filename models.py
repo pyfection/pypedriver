@@ -12,7 +12,7 @@ class Model(Base):
 
     id = Column(Integer, primary_key=True)
 
-    def __init__(self, **kwargs):
+    def __init__(self, custom_fields=None, **kwargs):
         for key, value in list(kwargs.items()):
             try:
                 alias = self.__aliases__[key]
