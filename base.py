@@ -10,7 +10,7 @@ class Client:
     api_token = ''
     proxies = {}
 
-    def __init__(self, token=None, user=None, password=None, proxies=None):
+    def __init__(self, token=None, user=None, password=None, proxies={}):
         try:
             assert token or user and password
         except AssertionError:
@@ -21,7 +21,7 @@ class Client:
         if token:
             self.api_token = token
         else:
-            token = self.authenticate(user, password)
+            token = self.authenticate(user, password, proxies)
             if token:
                 self.api_token = token
             else:
@@ -38,7 +38,7 @@ class Client:
             raise TypeError('Model {} does not exist'.format(name))
         return Model(path, self)
 
-    def authenticate(self, user, password):
+    def authenticate(self, user, password, proxies={}):
         session = requests.Session()
         response = session.post(
             self.BASE_URI + 'authorizations',
@@ -146,10 +146,11 @@ class Query:
 
 
 class Model:
+    __attributes__ = {}
+
     def __init__(self, path, client):
         self.__path__ = path
         self.client = client
-        self.__attributes__ = {}
 
     def __call__(self, **data):
         for key, value in data.items():
@@ -158,8 +159,9 @@ class Model:
         return self
 
     def __setattr__(self, name, value):
-        self.__attributes__[name] = value
-        super().__setattr__(self, name, value)
+        if name not in ('__path__', 'client'):
+            self.__attributes__[name] = value
+        super().__setattr__(name, value)
 
     def fetch_raw(self, filter_id=None, start=0, limit=50, sort=None):
         params = {'start': start, 'limit': limit}
