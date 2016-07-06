@@ -113,7 +113,7 @@ class Model:
         return model
 
     def save(self):
-        if 'id' in self.__attributes__:
+        if 'id' in self.__attributes__ and self.id is not None:
             method = 'POST'
             path = self.__path__
         else:
