@@ -8,9 +8,7 @@ It is modelled in a similar way to the official client one for [Node.js](https:/
 
 # Install
 
-```
 Currently the easiest way to install it is to download it and move it into your python/Lib/sidte-packages folder. Easier ways will be added soon.
-```
 
 # Usage
 
@@ -35,25 +33,25 @@ for deal in deals:
 
 # Supported objects
 
- * Activities (Not yet supported)
- * ActivityTypes (Not yet supported)
- * Authorizations (Not yet supported)
- * Currencies (Not yet supported)
- * Deals (Not yet supported)
- * DealFields (Not yet supported)
- * Files (Not yet supported)
- * Filters (Not yet supported)
- * Notes (Not yet supported)
+ * Activities (Untested)
+ * ActivityTypes (Untested)
+ * Authorizations (Untested)
+ * Currencies (Untested)
+ * Deals (Untested)
+ * DealFields (Untested)
+ * Files (Untested)
+ * Filters (Untested)
+ * Notes (Untested)
  * Organizations
  * OrganizationFields
  * Persons
- * PersonFields (Not yet supported)
- * Pipelines (Not yet supported)
- * Products (Not yet supported)
- * ProductFields (Not yet supported)
- * SearchResults (Not yet supported)
- * Stages (Not yet supported)
- * Users (Not yet supported)
+ * PersonFields (Untested)
+ * Pipelines (Untested)
+ * Products (Untested)
+ * ProductFields (Untested)
+ * SearchResults (Untested)
+ * Stages (Untested)
+ * Users (Untested)
 
 # Authorization against email and password
 
