@@ -1,6 +1,6 @@
 
 
-from util import urljoin
+from .util import urljoin
 
 
 class Model:
@@ -46,7 +46,7 @@ class Model:
 
     def __getattr__(self, name):
         name = self.__custom_fields__.get(name, name)
-        return super().__getattr__(name)
+        return super().__getattribute__(name)
 
     def __setattr__(self, name, value):
         name = self.__custom_fields__.get(name, name)
@@ -55,13 +55,12 @@ class Model:
         super().__setattr__(name, value)
 
     def __repr__(self):
-        name = type(self).__name__
         attributes = [
             '{}={}'.format(key, value)
-            for key, value in self.__attributes__().items()
+            for key, value in self.__attributes__.items()
         ]
         values = '; '.join(attributes)
-        return '<{name}({values})>'.format(name=name, values=values)
+        return '<{name}({values})>'.format(name=self.__name__, values=values)
 
     def fetch_raw(self, filter_id=None, start=0, limit=50, sort=None):
         params = {'start': start, 'limit': limit}
@@ -78,24 +77,30 @@ class Model:
 
     def fetch(self, filter_id=None, start=0, limit=50, sort=None):
         response = self.fetch_raw(filter_id, start, limit, sort)
+        if 'error' in response:
+            print(response['error'], response['error_info'])
+            return
         objects = response['data']
         if not objects:
             return []
         for data in objects:
-            yield Model(self.__path__, self.client)(**data)
+            yield Model(self.__name__, self.client)(**data)
 
     def fetch_all(self, filter_id=None, start=0):
         current = start
         run = True
         while run:
             response = self.fetch_raw(filter_id, current, 50)
+            if 'error' in response:
+                print(response['error'], response['error_info'])
+                break
             pagination = response['additional_data']['pagination']
             if pagination['more_items_in_collection']:
                 current += 50
             else:
                 run = False
-            for data in response['data']:
-                yield Model(self.__path__, self.client)(**data)
+            for data in response['data'] or []:
+                yield Model(self.__name__, self.client)(**data)
 
     def complete(self):
         models = list(self.fetch(limit=2))

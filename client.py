@@ -2,21 +2,23 @@
 
 import requests
 
-from model import Model
-from query import Query
-from util import clean, urljoin
+from .model import Model
+from .query import Query
+from .util import clean, urljoin
+
+
+BASE_URI = 'https://api.pipedrive.com/v1/'
 
 
 class Client:
-    BASE_URI = 'https://api.pipedrive.com/v1/'
     api_token = ''
     proxies = {}
     custom_field_models = {
-        'ActivityField': 'Activity',
-        'DealField': 'Deal',
+        'Activity': 'ActivityField',
+        'Deal': 'DealField',
         'Organization': 'OrganizationField',
-        'PersonField': 'Person',
-        'ProductField': 'Product',
+        'Person': 'PersonField',
+        'Product': 'ProductField',
     }
     custom_fields = {}
 
@@ -40,20 +42,20 @@ class Client:
         for model_name, field_model in self.custom_field_models.items():
             model = Model(field_model, self)
             models = model.fetch_all()
-            models = {
-                clean(model.name): model.key
-                for model in models
-                if len(model.key) == 40
-            }
-            self.custom_fields[model_name] = models
+            fields = {}
+            for model in models:
+                if len(model.key) == 40:
+                    fields[clean(model.name)] = model.key
+            self.custom_fields[model_name] = fields
 
     def __getattr__(self, name):
         return Model(name, self, self.custom_fields[name])
 
-    def authenticate(self, user, password, proxies={}):
+    @staticmethod
+    def authenticate(user, password, proxies={}):
         session = requests.Session()
         response = session.post(
-            self.BASE_URI + 'authorizations',
+            urljoin(BASE_URI, 'authorizations'),
             data={'email': user, 'password': password},
             proxies=proxies,
         )
@@ -69,7 +71,7 @@ class Client:
         if data is None:
             data = {}
         params['api_token'] = self.api_token
-        uri = urljoin(self.BASE_URI, path)
+        uri = urljoin(BASE_URI, path)
 
         session = requests.Session()
         methods = {
