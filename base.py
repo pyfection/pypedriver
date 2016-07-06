@@ -1,6 +1,6 @@
 
 
-import itertools
+import re
 
 import requests
 
@@ -9,6 +9,10 @@ class Client:
     BASE_URI = 'https://api.pipedrive.com/v1/'
     api_token = ''
     proxies = {}
+    custom_field_models = {
+        'Organization': 'OrganizationField',
+    }
+    custom_fields = {}
 
     def __init__(self, token=None, user=None, password=None, proxies={}):
         try:
@@ -27,8 +31,18 @@ class Client:
             else:
                 raise TypeError('Could not authenticate')
 
+        for model_name, field_model in self.custom_field_models.items():
+            model = Model(field_model, self)
+            models = model.fetch_all()
+            models = {
+                clean(model.name): model.key
+                for model in models
+                if len(model.key) == 40
+            }
+            self.custom_fields[model_name] = models
+
     def __getattr__(self, name):
-        return Model(name, self)
+        return Model(name, self, self.custom_fields[name])
 
     def authenticate(self, user, password, proxies={}):
         session = requests.Session()
@@ -142,15 +156,18 @@ class Model:
     __mapping__ = {
         'Organization': 'organizations',
         'Person': 'persons',
+        'OrganizationField': 'organizationFields',
     }
+    __custom_fields__ = {}
 
-    def __init__(self, name, client):
+    def __init__(self, name, client, custom_fields={}):
         self.__name__ = name
         try:
             self.__path__ = self.__mapping__[name]
         except KeyError:
             raise TypeError('Model {} does not exist'.format(name))
         self.client = client
+        self.__custom_fields__.update(custom_fields)
 
     def __call__(self, **data):
         for key, value in data.items():
@@ -158,7 +175,12 @@ class Model:
         self.__attributes__.update(data)
         return self
 
+    def __getattr__(self, name):
+        name = self.__custom_fields__.get(name, name)
+        return super().__getattr__(name)
+
     def __setattr__(self, name, value):
+        name = self.__custom_fields__.get(name, name)
         if name not in ('client', ) or not name.startswith('__'):
             self.__attributes__[name] = value
         super().__setattr__(name, value)
@@ -256,3 +278,7 @@ class Model:
 
 def urljoin(*pieces):
     return '/'.join(s.strip('/') for s in pieces)
+
+
+def clean(string):
+    return re.sub('\W|^(?=\d)', '_', string)
