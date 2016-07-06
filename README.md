@@ -1,38 +1,149 @@
-# pypedrive
-Python API for the PipeDrive API.
+# Pipedrive client for Python based apps (unofficial)
 
-This is an API completely written in Python to access the PipeDrive API (v1) more easily over Python.
-The only dependencies are the request module and SQLAlchemy.
 
----
-### Example on How to Start
-First of all we need to import the API and the models we will use.
-```python
-from pypedrive import API
-from pypedrive.models import Organization
+Pipedrive is a sales pipeline software that gets you organized. It's a powerful sales CRM with effortless sales pipeline management. See www.pipedrive.com for details.
+
+This is an unofficial Pipedrive API wrapper-client for Python based apps, distributed by Matumaros freely under the MIT licence. It provides you with basic functionality for operating with objects such as Deals, Persons, Organizations, Products and much more, without having to worry about the underlying networking stack and actual HTTPS requests.
+It is modelled in a similar way to the official client one for [Node.js](https://github.com/pipedrive/client-nodejs)
+
+# Install
+
 ```
-Then we need to authenticate.
-```python
-api = API()
-success = api.authenticate(
-    username='testname@testcompany.com',
-    password='mypassword123',
-    proxies={'https': '1.2.3.4:4567'},  # This is optional
-)
-print('Successful authenticated' if success else 'Authentication failed')
+Currently the easiest way to install it is to download it and move it into your python/Lib/sidte-packages folder. Easier ways will be added soon.
 ```
-The next step is to retrieve information, which uses "GET".
+
+# Usage
+
+With a pre-set API token:
 ```python
-query = api.query(Organization)
-query.filter_by(1)
-orgs = query.get_all()
+from pypedrive import Client
+pipedrive = Client('YOUR_API_TOKEN_HERE')
 ```
-The first part gets us a query on which we can operate. Important to note is that we have not made a request to PipeDrive yet.
-In the second step we tell the query to use the filter which is specified in PipeDrive with the ID "1".
-In the third step we get a generator. We still did not make any request to the server, that happens when you iterate over "orgs".
+
+# A simple "Hello world" that lists some deals
+
+Here's a quick example that will list some deals from your Pipedrive account:
+
 ```python
-for org in orgs:
-    print(org)
+from pypedrive import Client
+pipedrive = Client('YOUR_API_TOKEN_HERE')
+
+deals = pipedrive.Deals.fetch_all()
+for deal in deals:
+    print(deal.title, '(worth', deals.value, deals.currency + ')')
 ```
-> Although pypedrive uses SQLAlchemy for the models, a database is not required.
-> However if you wish to store the models, then you can use them just like any other SQLAlchemy model.
+
+# Supported objects
+
+ * Activities (Not yet supported)
+ * ActivityTypes (Not yet supported)
+ * Authorizations (Not yet supported)
+ * Currencies (Not yet supported)
+ * Deals (Not yet supported)
+ * DealFields (Not yet supported)
+ * Files (Not yet supported)
+ * Filters (Not yet supported)
+ * Notes (Not yet supported)
+ * Organizations
+ * OrganizationFields
+ * Persons
+ * PersonFields (Not yet supported)
+ * Pipelines (Not yet supported)
+ * Products (Not yet supported)
+ * ProductFields (Not yet supported)
+ * SearchResults (Not yet supported)
+ * Stages (Not yet supported)
+ * Users (Not yet supported)
+
+# Authorization against email and password
+
+### Client.authenticate(user='john@doe.com', password='example')
+Fetches the possible API tokens for the given user against email and password. You can use the API tokens returned by this method to instantiate the API client by issuing ```pipedrive = Client('API_TOKEN_HERE')``` or directly enter email and password by issuing ```pipedrive = Client(user='john@doe.com', password='example')```.
+
+# Supported operations for object collections
+# Supported operations for each object
+> Note that the "Supported operations for object collections" part is omitted here, because it doesn't quite work the same way as for Node.js. By issuing ```pipedrive.{Object}```, you get an object of that type in return and can issue all following methods on it. You can also build chains with all but the ```fetch``` methods, because they return another object.
+
+### {object}.fetch(filter_id=None, start=0, limit=50, sort=None)
+Returns a maximum of ```limit``` objects as generator.
+
+### {object}.fetch_raw(filter_id=None, start=0, limit=50, sort=None)
+Returns the JSON response.
+
+### {object}.fetch_all(filter_id=None, start=0, sort=None)
+Returns as many objects as possible as generator.
+
+### {object}.complete()
+Uses the current object as filter and returns a new object or an error if it found multiple matches.
+
+### {object}.save()
+Update an object.
+
+### {object}.remove()
+Delete an object with a specifc ID.
+
+### {object}.merge(with_id)
+Merge two objects of the same kind. Returns ```error``` in case of an error to the callback. Merge is only supported for the following objects:
+ * Persons
+ * Organizations
+ * Users
+
+# Operations with nested objects
+
+## Adding a product to a deal
+
+Adding a product to a deal is not supported yet.
+
+## Updating a deal product
+
+Updating deal products is not supported yet.
+
+## Delete a product from a deal
+
+Deleting a product from a deal is not supported yet.
+
+## Search for field value matches
+
+Search for field value matches is not supported yet.
+
+## Retrieve all records for a given object type:
+
+You can request all entries for an valid object using `fetch_all(filter_id=None, start=0)`
+
+```python
+organizations = pipedrive.Organizations.fetch_all()
+```
+
+## Retrieve all records for a given object type which match a certain criteria:
+
+You can request all entries for an valid object using a call on the Organization object.
+
+```python
+organizations = pipedrive.Organization(open_deals_count=0).fetch_all()
+```
+
+# Examples
+
+## Get 15 first deals using the first deals filter
+
+```python
+from pypedrive import Client
+pipedrive = Client(user='john@doe.com', password='example')
+
+filter_list = list(pipedrive.Filter(type='deals').fetch_all())
+if len(filter_list) > 0:
+    deals = pipedrive.Deal.fetch(
+        filter_id=filter_list[0].id,
+        limit=15,
+    )
+    for deal in deals:
+        print(deal.title, '(worth', deal.value, deal.currency + ')')
+```
+
+# API Documentation
+
+The Pipedrive REST API documentation can be found at https://developers.pipedrive.com/v1
+
+# Licence
+
+This Pipedrive API client is distributed under the MIT licence.
