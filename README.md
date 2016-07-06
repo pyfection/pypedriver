@@ -4,11 +4,11 @@
 Pipedrive is a sales pipeline software that gets you organized. It's a powerful sales CRM with effortless sales pipeline management. See www.pipedrive.com for details.
 
 This is an unofficial Pipedrive API wrapper-client for Python based apps, distributed by Matumaros freely under the MIT licence. It provides you with basic functionality for operating with objects such as Deals, Persons, Organizations, Products and much more, without having to worry about the underlying networking stack and actual HTTPS requests.
-It is modelled in a similar way to the official client one for [Node.js](https://github.com/pipedrive/client-nodejs)
+It is modelled in a similar way to the official client for [Node.js](https://github.com/pipedrive/client-nodejs)
 
 # Install
 
-Currently the easiest way to install it is to download it and move it into your python/Lib/sidte-packages folder. Easier ways will be added soon.
+Currently the easiest way to install it is to download it and move it into your python/Lib/sidte-packages folder. Easier ways will be added soon. You will also need the [requests](http://docs.python-requests.org/en/master/) package.
 
 # Usage
 
@@ -58,7 +58,6 @@ for deal in deals:
 ### Client.authenticate(user='john@doe.com', password='example')
 Fetches the possible API tokens for the given user against email and password. You can use the API tokens returned by this method to instantiate the API client by issuing ```pipedrive = Client('API_TOKEN_HERE')``` or directly enter email and password by issuing ```pipedrive = Client(user='john@doe.com', password='example')```.
 
-# Supported operations for object collections
 # Supported operations for each object
 > Note that the "Supported operations for object collections" part is omitted here, because it doesn't quite work the same way as for Node.js. By issuing ```pipedrive.{Object}```, you get an object of that type in return and can issue all following methods on it. You can also build chains with all but the ```fetch``` methods, because they return another object.
 
@@ -136,6 +135,15 @@ if len(filter_list) > 0:
     )
     for deal in deals:
         print(deal.title, '(worth', deal.value, deal.currency + ')')
+```
+
+## Create copy of Organization with different owner_id
+
+```python
+from pypedrive import Client
+pipedrive = Client(user='john@doe.com', password='example')
+
+pipedrive.Organization(id=5).complete()(id=None, owner_id=6).save()
 ```
 
 # API Documentation
