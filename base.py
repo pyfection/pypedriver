@@ -10,7 +10,11 @@ class Client:
     api_token = ''
     proxies = {}
     custom_field_models = {
+        'ActivityField': 'Activity',
+        'DealField': 'Deal',
         'Organization': 'OrganizationField',
+        'PersonField': 'Person',
+        'ProductField': 'Product',
     }
     custom_fields = {}
 
@@ -154,9 +158,26 @@ class Query:
 class Model:
     __attributes__ = {}
     __mapping__ = {
+        'Activity': 'activities',
+        'ActivityType': 'activityTypes',
+        'Authorization': 'authorizations',
+        'Currency': 'currencies',
+        'Deal': 'deals',
+        'File': 'files',
+        'Filter': 'filters',
+        'Note': 'notes',
         'Organization': 'organizations',
         'Person': 'persons',
+        'Pipeline': 'pipelines',
+        'Product': 'products',
+        'SearchResult': 'searchResults',
+        'Stage': 'stages',
+        'User': 'users',
+        'ActivityField': 'activityFields',
+        'DealField': 'dealFields',
         'OrganizationField': 'organizationFields',
+        'PersonField': 'personFields',
+        'ProductField': 'productFields',
     }
     __custom_fields__ = {}
 
