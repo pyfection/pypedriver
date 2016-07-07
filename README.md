@@ -14,7 +14,7 @@ Currently the easiest way to install it is to download it and move it into your 
 
 With a pre-set API token:
 ```python
-from pypedrive import Client
+from pypedriver import Client
 pipedrive = Client('YOUR_API_TOKEN_HERE')
 ```
 
@@ -23,7 +23,7 @@ pipedrive = Client('YOUR_API_TOKEN_HERE')
 Here's a quick example that will list some deals from your Pipedrive account:
 
 ```python
-from pypedrive import Client
+from pypedriver import Client
 pipedrive = Client('YOUR_API_TOKEN_HERE')
 
 deals = pipedrive.Deals.fetch_all()
@@ -124,7 +124,7 @@ organizations = pipedrive.Organization(open_deals_count=0).fetch_all()
 ## Get 15 first deals using the first deals filter
 
 ```python
-from pypedrive import Client
+from pypedriver import Client
 pipedrive = Client(user='john@doe.com', password='example')
 
 filter_list = list(pipedrive.Filter(type='deals').fetch_all())
@@ -140,7 +140,7 @@ if len(filter_list) > 0:
 ## Create copy of Organization with different owner_id
 
 ```python
-from pypedrive import Client
+from pypedriver import Client
 pipedrive = Client(user='john@doe.com', password='example')
 
 pipedrive.Organization(id=5).complete()(id=None, owner_id=6).save()
