@@ -1,6 +1,6 @@
 
 
-from .util import urljoin
+from .util import urljoin, clean
 
 
 class Model:
@@ -40,16 +40,26 @@ class Model:
 
     def __call__(self, **data):
         for key, value in data.items():
+            key = self.get_field_key(key)
+            try:
+                options = self.__custom_fields__[key].options
+            except (AttributeError, KeyError):
+                pass
+            else:
+                options = {int(o['id']): o['label'] for o in options}
+                try:
+                    value = options[int(value)]
+                except (ValueError, TypeError):
+                    pass
             setattr(self, key, value)
-        self.__attributes__.update(data)
         return self
 
     def __getattr__(self, name):
-        name = self.__custom_fields__.get(name, name)
+        name = self.get_field_key(name)
         return super().__getattribute__(name)
 
     def __setattr__(self, name, value):
-        name = self.__custom_fields__.get(name, name)
+        name = self.get_field_key(name)
         if name not in ('client', ) or not name.startswith('__'):
             self.__attributes__[name] = value
         super().__setattr__(name, value)
@@ -61,6 +71,14 @@ class Model:
         ]
         values = '; '.join(attributes)
         return '<{name}({values})>'.format(name=self.__name__, values=values)
+
+    def get_field_key(self, name):
+        for key, field in self.__custom_fields__.items():
+            if clean(field.name) == name:
+                break
+        else:
+            key = None
+        return key or name
 
     def fetch_raw(self, filter_id=None, start=0, limit=50, sort=None):
         params = {'start': start, 'limit': limit}

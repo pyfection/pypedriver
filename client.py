@@ -4,7 +4,7 @@ import requests
 
 from .model import Model
 from .query import Query
-from .util import clean, urljoin
+from .util import urljoin
 
 
 BASE_URI = 'https://api.pipedrive.com/v1/'
@@ -45,7 +45,7 @@ class Client:
             fields = {}
             for model in models:
                 if len(model.key) == 40:
-                    fields[clean(model.name)] = model.key
+                    fields[model.key] = model
             self.custom_fields[model_name] = fields
 
     def __getattr__(self, name):
