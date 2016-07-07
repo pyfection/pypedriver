@@ -8,4 +8,5 @@ def urljoin(*pieces):
 
 
 def clean(string):
-    return re.sub('\W|^(?=\d)', '_', string)
+    string = re.sub('\W|^(?=\d)', '_', string).lower()
+    return string
