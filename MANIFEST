@@ -3,5 +3,4 @@ setup.py
 pypedriver\__init__.py
 pypedriver\client.py
 pypedriver\model.py
-pypedriver\query.py
 pypedriver\util.py
