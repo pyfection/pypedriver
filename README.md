@@ -8,7 +8,11 @@ It is modelled in a similar way to the official client for [Node.js](https://git
 
 # Install
 
-Currently the easiest way to install it is to download it and move it into your python/Lib/sidte-packages folder. Easier ways will be added soon. You will also need the [requests](http://docs.python-requests.org/en/master/) package.
+```python
+pip install -U pypedriver
+pip install -U requests
+```
+pypedriver relies on the [requests](http://docs.python-requests.org/en/master/) package.
 
 # Usage
 
