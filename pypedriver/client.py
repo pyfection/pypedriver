@@ -12,7 +12,7 @@ BASE_URI = 'https://api.pipedrive.com/v1/'
 class Client:
     api_token = ''
     proxies = {}
-    custom_field_models = {
+    CUSTOM_FIELD_MODELS = {
         'Activity': 'ActivityField',
         'Deal': 'DealField',
         'Organization': 'OrganizationField',
@@ -36,9 +36,7 @@ class Client:
             TypeError -- When token or user and password are not given
             TypeError -- When authentication failed
         """
-        try:
-            assert token or user and password
-        except AssertionError:
+        if token or user and password:
             raise TypeError('Client expects token or user and password')
 
         if proxies:
@@ -52,7 +50,7 @@ class Client:
             else:
                 raise TypeError('Could not authenticate')
 
-        for model_name, field_model in self.custom_field_models.items():
+        for model_name, field_model in self.CUSTOM_FIELD_MODELS.items():
             model = Model(field_model, self)
             models = model.fetch_all()
             fields = {}

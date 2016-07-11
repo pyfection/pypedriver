@@ -4,9 +4,12 @@ import re
 
 
 def urljoin(*pieces):
-    """Join a internet URL
+    """Join a URL
 
     Joins the pieces together to an URL.
+    Cannot be replaced by urllib.parse.urljoin,
+    because that doesn't join parts of a path and
+    doesn't allow for multiple pieces to be joined.
 
     Arguments:
         *pieces {str} -- pieces of URL

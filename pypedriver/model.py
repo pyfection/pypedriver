@@ -4,7 +4,7 @@ from .util import urljoin, clean
 
 
 class Model:
-    __mapping__ = {
+    MAPPING = {
         'Activity': 'activities',
         'ActivityType': 'activityTypes',
         'Authorization': 'authorizations',
@@ -42,14 +42,14 @@ class Model:
         Raises:
             TypeError -- When argument 'name' not a valid model name
         """
-        self.__name__ = name
-        self.__custom_fields__ = custom_fields or {}
+        self.__name = name
+        self.__custom_fields = custom_fields or {}
         try:
-            self.__path__ = self.__mapping__[name]
+            self.__path = self.MAPPING[name]
         except KeyError:
             raise TypeError('Model {} does not exist'.format(name))
         self.client = client
-        self.__attributes__ = {}
+        self.__attributes = {}
 
     def __call__(self, **data):
         """Shortcut to update method
@@ -71,16 +71,16 @@ class Model:
     def __setattr__(self, name, value):
         if name not in ('client', ) and not name.startswith('__'):
             name = self.get_field_key(name)
-            self.__attributes__[name] = value
+            self.__attributes[name] = value
         super().__setattr__(name, value)
 
     def __repr__(self):
         attributes = [
             '{}={}'.format(key, value)
-            for key, value in self.__attributes__.items()
+            for key, value in self.__attributes.items()
         ]
         values = '; '.join(attributes)
-        return '<{name}({values})>'.format(name=self.__name__, values=values)
+        return '<{name}({values})>'.format(name=self.__name, values=values)
 
     def get_field_key(self, name):
         """Translate field key
@@ -94,7 +94,7 @@ class Model:
         Returns:
             str -- cleaned field key
         """
-        fields = super().__getattribute__('__custom_fields__')
+        fields = super().__getattribute__('__custom_fields')
         for key, field in fields.items():
             if clean(field.name) == name:
                 break
@@ -116,7 +116,7 @@ class Model:
         for key, value in data.items():
             key = self.get_field_key(key)
             try:
-                options = self.__custom_fields__[key].options
+                options = self.__custom_fields[key].options
             except (AttributeError, KeyError):
                 pass
             else:
@@ -154,14 +154,14 @@ class Model:
 
         response = self.client.request(
             method='GET',
-            path=self.__path__,
+            path=self.__path,
             params=params,
         )
         if 'error' in response:
             raise ConnectionError(response['error'] + response['error_info'])
-        if not self.__attributes__:
+        if not self.__attributes:
             return response
-        attrs = self.__attributes__.items()
+        attrs = self.__attributes.items()
         objects = response['data']
         data = []
         objects = list(objects)
@@ -192,7 +192,7 @@ class Model:
         if not objects:
             return []
         for data in objects:
-            yield getattr(self.client, self.__name__)(**data)
+            yield getattr(self.client, self.__name)(**data)
 
     def fetch_all(self, filter_id=None, start=0):
         """Fetch all models
@@ -217,7 +217,7 @@ class Model:
             else:
                 run = False
             for data in response['data'] or []:
-                yield getattr(self.client, self.__name__)(**data)
+                yield getattr(self.client, self.__name)(**data)
 
     def complete(self):
         """Complete self
@@ -249,16 +249,16 @@ class Model:
         Returns:
             Model -- self
         """
-        if 'id' in self.__attributes__ and self.id is not None:
+        if 'id' in self.__attributes and self.id is not None:
             method = 'POST'
-            path = self.__path__
+            path = self.__path
         else:
             method = 'PUT'
-            path = urljoin(self.__path__, str(self.id))
+            path = urljoin(self.__path, str(self.id))
         self.client.request(
             method=method,
             path=path,
-            params=self.__attributes__,
+            params=self.__attributes,
         )
         return self
 
@@ -279,7 +279,7 @@ class Model:
             raise AttributeError('Requires the attribute "id" to be set')
         self.client.request(
             method='DELETE',
-            path=urljoin(self.__path__, str(id)),
+            path=urljoin(self.__path, str(id)),
         )
         return self
 
@@ -303,7 +303,7 @@ class Model:
             raise AttributeError('Requires the attribute "id" to be set')
         self.client.request(
             method='PUT',
-            path=urljoin(self.__path__, str(id), 'merge'),
+            path=urljoin(self.__path, str(id), 'merge'),
             params={'merge_with_id': with_id},
         )
         return self
