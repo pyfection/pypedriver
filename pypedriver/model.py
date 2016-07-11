@@ -38,20 +38,7 @@ class Model:
         self.__attributes__ = {}
 
     def __call__(self, **data):
-        for key, value in data.items():
-            key = self.get_field_key(key)
-            try:
-                options = self.__custom_fields__[key].options
-            except (AttributeError, KeyError):
-                pass
-            else:
-                options = {int(o['id']): o['label'] for o in options}
-                try:
-                    value = options[int(value)]
-                except (ValueError, TypeError):
-                    pass
-            setattr(self, key, value)
-        return self
+        return self.update(**data)
 
     def __getattr__(self, name):
         name = self.get_field_key(name)
@@ -79,6 +66,22 @@ class Model:
         else:
             key = None
         return key or name
+
+    def update(self, **data):
+        for key, value in data.items():
+            key = self.get_field_key(key)
+            try:
+                options = self.__custom_fields__[key].options
+            except (AttributeError, KeyError):
+                pass
+            else:
+                options = {int(o['id']): o['label'] for o in options}
+                try:
+                    value = options[int(value)]
+                except (ValueError, TypeError):
+                    pass
+            setattr(self, key, value)
+        return self
 
     def fetch_raw(self, filter_id=None, start=0, limit=50, sort=None):
         params = {'start': start, 'limit': limit}
