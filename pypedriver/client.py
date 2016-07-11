@@ -48,7 +48,10 @@ class Client:
             self.custom_fields[model_name] = fields
 
     def __getattr__(self, name):
-        return Model(name, self, self.custom_fields[name])
+        if name[0].isupper():
+            return Model(name, self, self.custom_fields.get(name, {}))
+        else:
+            return super().__getattribute__(name)
 
     @staticmethod
     def authenticate(user, password, proxies={}):
