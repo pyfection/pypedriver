@@ -287,10 +287,12 @@ class Model:
             id = self.id
         except AttributeError:
             raise AttributeError('Requires the attribute "id" to be set')
-        self.__client.request(
+        response = self.__client.request(
             method='DELETE',
             path=urljoin(self.__path, str(id)),
         )
+        if 'error' in response:
+            raise ConnectionError(response['error'])
         return self
 
     def merge(self, with_id):
@@ -311,9 +313,11 @@ class Model:
             id = self.id
         except AttributeError:
             raise AttributeError('Requires the attribute "id" to be set')
-        self.__client.request(
+        response = self.__client.request(
             method='PUT',
             path=urljoin(self.__path, str(id), 'merge'),
             params={'merge_with_id': with_id},
         )
+        if 'error' in response:
+            raise ConnectionError(response['error'])
         return self
