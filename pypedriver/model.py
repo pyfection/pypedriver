@@ -316,7 +316,7 @@ class Model:
         response = self.__client.request(
             method='PUT',
             path=urljoin(self.__path, str(id), 'merge'),
-            params={'merge_with_id': with_id},
+            data={'merge_with_id': with_id},
         )
         if 'error' in response:
             raise ConnectionError(response['error'])
