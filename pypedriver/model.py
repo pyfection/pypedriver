@@ -48,7 +48,7 @@ class Model:
             self.__path = self.MAPPING[name]
         except KeyError:
             raise TypeError('Model {} does not exist'.format(name))
-        self.client = client
+        self.__client = client
         self.__attributes = {}
 
     def __call__(self, **data):
@@ -69,7 +69,7 @@ class Model:
         return super().__getattribute__(name)
 
     def __setattr__(self, name, value):
-        if name not in ('client', ) and not name.startswith('__'):
+        if not name.startswith('_Model__'):
             name = self.get_field_key(name)
             self.__attributes[name] = value
         super().__setattr__(name, value)
@@ -94,7 +94,7 @@ class Model:
         Returns:
             str -- cleaned field key
         """
-        fields = super().__getattribute__('__custom_fields')
+        fields = super().__getattribute__('_Model__custom_fields')
         for key, field in fields.items():
             if clean(field.name) == name:
                 break
@@ -152,7 +152,7 @@ class Model:
         if sort:
             params.update({'sort': sort})
 
-        response = self.client.request(
+        response = self.__client.request(
             method='GET',
             path=self.__path,
             params=params,
@@ -192,7 +192,7 @@ class Model:
         if not objects:
             return []
         for data in objects:
-            yield getattr(self.client, self.__name)(**data)
+            yield getattr(self.__client, self.__name)(**data)
 
     def fetch_all(self, filter_id=None, start=0):
         """Fetch all models
@@ -217,7 +217,7 @@ class Model:
             else:
                 run = False
             for data in response['data'] or []:
-                yield getattr(self.client, self.__name)(**data)
+                yield getattr(self.__client, self.__name)(**data)
 
     def complete(self):
         """Complete self
@@ -255,11 +255,13 @@ class Model:
         else:
             method = 'PUT'
             path = urljoin(self.__path, str(self.id))
-        self.client.request(
+        response = self.__client.request(
             method=method,
             path=path,
-            params=self.__attributes,
+            data=self.__attributes,
         )
+        if 'error' in response:
+            raise ConnectionError(response['error'])
         return self
 
     def remove(self):
@@ -277,7 +279,7 @@ class Model:
             id = self.id
         except AttributeError:
             raise AttributeError('Requires the attribute "id" to be set')
-        self.client.request(
+        self.__client.request(
             method='DELETE',
             path=urljoin(self.__path, str(id)),
         )
@@ -301,7 +303,7 @@ class Model:
             id = self.id
         except AttributeError:
             raise AttributeError('Requires the attribute "id" to be set')
-        self.client.request(
+        self.__client.request(
             method='PUT',
             path=urljoin(self.__path, str(id), 'merge'),
             params={'merge_with_id': with_id},
