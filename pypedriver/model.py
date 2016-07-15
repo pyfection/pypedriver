@@ -194,7 +194,7 @@ class Model:
         for data in objects:
             yield getattr(self.__client, self.__name)(**data)
 
-    def fetch_all(self, filter_id=None, start=0):
+    def fetch_all(self, filter_id=None, start=0, limit=None):
         """Fetch all models
 
         Fetches all models.
@@ -203,11 +203,13 @@ class Model:
         Keyword Arguments:
             filter_id {int} -- see: Filters (default: {None})
             start {int} -- id to start at (default: {0})
+            limit {int} -- maximum of returned objects (default: {None})
 
         Yields:
             Model -- model that corresponds to filters and set attributes
         """
         current = start
+        yielded = 0
         run = True
         while run:
             response = self.fetch_raw(filter_id, current, 50)
@@ -217,7 +219,13 @@ class Model:
             else:
                 run = False
             for data in response['data'] or []:
+                if limit and yielded >= limit:
+                    break
+                yielded += 1
                 yield getattr(self.__client, self.__name)(**data)
+            else:
+                continue
+            break
 
     def complete(self):
         """Complete self
@@ -231,7 +239,7 @@ class Model:
             ValueError -- When set attributes are not precise enough to
                           match exactly one object
         """
-        models = list(self.fetch(limit=2))
+        models = list(self.fetch_all(limit=2))
         if len(models) > 1:
             raise ValueError(
                 'Model is too ambiguous to complete, got too many results'
