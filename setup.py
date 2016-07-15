@@ -9,7 +9,7 @@ setup(
     author='Matthias Schreiber',
     author_email='mat@boar.bar',
     url='https://github.com/matumaros/pypedriver',
-    version='1.1',
+    version='1.2',
     license='MIT',
     packages=['pypedriver']
 )

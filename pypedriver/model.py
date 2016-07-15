@@ -249,7 +249,7 @@ class Model:
         Returns:
             Model -- self
         """
-        if 'id' in self.__attributes and self.id is not None:
+        if 'id' not in self.__attributes or self.id is None:
             method = 'POST'
             path = self.__path
         else:

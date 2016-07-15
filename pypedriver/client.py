@@ -37,6 +37,10 @@ class Client:
             TypeError -- When authentication failed
         """
         if token or user and password:
+            # This way is easier understandable than
+            # if not token and not (user or password):
+            pass
+        else:
             raise TypeError('Client expects token or user and password')
 
         if proxies:
