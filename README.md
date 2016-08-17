@@ -3,7 +3,7 @@
 
 Pipedrive is a sales pipeline software that gets you organized. It's a powerful sales CRM with effortless sales pipeline management. See www.pipedrive.com for details.
 
-This is an unofficial Pipedrive API wrapper-client for Python based apps, distributed by Matumaros freely under the MIT licence. It provides you with basic functionality for operating with objects such as Deals, Persons, Organizations, Products and much more, without having to worry about the underlying networking stack and actual HTTPS requests.
+This is an unofficial Pipedrive API wrapper-client for Python 3.x based apps, distributed by Matumaros freely under the MIT licence.  It provides you with basic functionality for operating with objects such as Deals, Persons, Organizations, Products and much more, without having to worry about the underlying networking stack and actual HTTPS requests.
 It is modelled in a similar way to the official client for [Node.js](https://github.com/pipedrive/client-nodejs)
 
 # Install
