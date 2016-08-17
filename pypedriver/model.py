@@ -240,9 +240,13 @@ class Model:
                           match exactly one object
         """
         models = list(self.fetch_all(limit=2))
-        if len(models) > 1:
+        if not models:
             raise ValueError(
-                'Model is too ambiguous to complete, got too many results'
+                'No model exists based on set attributes, got no result.'
+            )
+        elif len(models) > 1:
+            raise ValueError(
+                'Model is too ambiguous to complete, got too many results.'
             )
         else:
             model = models[0]
