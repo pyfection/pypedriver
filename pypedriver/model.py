@@ -122,7 +122,7 @@ class Model:
             else:
                 options = {int(o['id']): o['label'] for o in options}
                 try:
-                    value = options[int(value)]
+                    value = options.get(int(value))
                 except (ValueError, TypeError):
                     pass
             setattr(self, key, value)
