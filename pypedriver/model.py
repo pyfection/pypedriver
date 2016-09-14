@@ -213,6 +213,8 @@ class Model:
         run = True
         while run:
             response = self.fetch_raw(filter_id, current, 50)
+            if response['success'] and 'additional_data' not in response:
+                break
             pagination = response['additional_data']['pagination']
             if pagination['more_items_in_collection']:
                 current += 50
