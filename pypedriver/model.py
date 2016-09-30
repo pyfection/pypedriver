@@ -3,7 +3,7 @@
 from .util import urljoin, clean
 
 
-class Model:
+class Model(object):
     MAPPING = {
         'Activity': 'activities',
         'ActivityType': 'activityTypes',
@@ -190,7 +190,8 @@ class Model:
         response = self.fetch_raw(filter_id, start, limit, sort)
         objects = response['data']
         if not objects:
-            return []
+            yield []
+            return
         for data in objects:
             yield getattr(self.__client, self.__name)(**data)
 

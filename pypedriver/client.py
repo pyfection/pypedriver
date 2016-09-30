@@ -9,7 +9,7 @@ from .util import urljoin
 BASE_URI = 'https://api.pipedrive.com/v1/'
 
 
-class Client:
+class Client(object):
     api_token = ''
     proxies = {}
     CUSTOM_FIELD_MODELS = {
