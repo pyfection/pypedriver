@@ -82,6 +82,12 @@ class Model:
         values = '; '.join(attributes)
         return '<{name}({values})>'.format(name=self.__name, values=values)
 
+    def __json__(self):
+        ret = {}
+        for key, value in self.__attributes.items():
+            ret[str(key)] = str(value);
+        return ret
+
     def get_field_key(self, name):
         """Translate field key
 
