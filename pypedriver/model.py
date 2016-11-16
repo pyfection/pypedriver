@@ -82,12 +82,9 @@ class Model:
         values = '; '.join(attributes)
         return '<{name}({values})>'.format(name=self.__name, values=values)
 
-    #Returns JSON Formatted dict
-    def __json__(self):
-        ret = {}
-        for key, value in self.__attributes.items():
-            ret[str(key)] = str(value);
-        return ret
+    def attributes_as_json(self):
+        """Return attributes in JSON format"""
+        return {str(key): str(val) for key, val in self.__attributes.items()}
 
     def get_field_key(self, name):
         """Translate field key
