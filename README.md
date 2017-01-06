@@ -30,32 +30,32 @@ Here's a quick example that will list some deals from your Pipedrive account:
 from pypedriver import Client
 pipedrive = Client('YOUR_API_TOKEN_HERE')
 
-deals = pipedrive.Deals.fetch_all()
+deals = pipedrive.Deal.fetch_all()
 for deal in deals:
     print(deal.title, '(worth', deals.value, deals.currency + ')')
 ```
 
 # Supported objects
 
- * Activities (Untested)
- * ActivityTypes (Untested)
- * Authorizations (Untested)
- * Currencies (Untested)
- * Deals (Untested)
- * DealFields (Untested)
- * Files (Untested)
- * Filters (Untested)
- * Notes (Untested)
- * Organizations
- * OrganizationFields
- * Persons
- * PersonFields (Untested)
- * Pipelines (Untested)
- * Products (Untested)
- * ProductFields (Untested)
- * SearchResults (Untested)
- * Stages (Untested)
- * Users (Untested)
+ * Activity (Untested)
+ * ActivityType (Untested)
+ * Authorization (Untested)
+ * Currency (Untested)
+ * Deal (Untested)
+ * DealField (Untested)
+ * File (Untested)
+ * Filter (Untested)
+ * Note (Untested)
+ * Organization
+ * OrganizationField
+ * Person
+ * PersonField (Untested)
+ * Pipeline (Untested)
+ * Product (Untested)
+ * ProductField (Untested)
+ * SearchResult (Untested)
+ * Stage (Untested)
+ * User (Untested)
 
 # Authorization against email and password
 
@@ -85,9 +85,9 @@ Delete an object with a specifc ID.
 
 ### {object}.merge(with_id)
 Merge two objects of the same kind. Returns ```error``` in case of an error to the callback. Merge is only supported for the following objects:
- * Persons
- * Organizations
- * Users
+ * Person
+ * Organization
+ * User
 
 # Operations with nested objects
 
@@ -112,7 +112,7 @@ Search for field value matches is not supported yet.
 You can request all entries for an valid object using `fetch_all(filter_id=None, start=0)`
 
 ```python
-organizations = pipedrive.Organizations.fetch_all()
+organizations = pipedrive.Organization.fetch_all()
 ```
 
 ## Retrieve all records for a given object type which match a certain criteria:
